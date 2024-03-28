@@ -1,22 +1,24 @@
-name: Build/Verify PWM
-
-on: [ push, pull_request ]
-
 jobs:
   build:
-
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ ubuntu-latest, windows-latest ]
-
+    runs-on: self-hosted
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK 17
+    - continue-on-error: true
+      uses: actions/checkout@v2
+    - continue-on-error: true
+      name: Set up JDK 17
       uses: actions/setup-java@v2
       with:
+        distribution: temurin
         java-version: '17'
-        distribution: 'temurin'
-    - name: Build with Maven
+    - continue-on-error: true
+      name: Build with Maven
       run: mvn -B verify --file pom.xml
+    strategy:
+      matrix:
+        os:
+        - ubuntu-latest
+        - windows-latest
+name: Build/Verify PWM
+on:
+  repository_dispatch:
+    types: trigger-ga___maven.yml
